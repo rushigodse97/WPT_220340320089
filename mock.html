@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script src="jquery-3.5.1.min.js"></script>
+	<script>
+		$(() => {
+
+			function showContent() {
+				let books = [];
+
+				let input = {};
+				let ajaxparams = {
+					data: input,
+					url: "http://localhost:8081/getAllItems",
+					type: 'get',
+					dataType: 'json',
+					success: (dataRecieved) => {
+						books = dataRecieved;
+						let content = "";
+						for (let i = 0; i < books.length; i++) {
+							content += '<br>' + books[i].bookid + " " + books[i].bookname + " " + books[i].price;
+						}
+						$("#showAll").html(content);
+					},
+					error: (errorRecieved) => {
+						console.log(errorRecieved);
+					}
+				};
+				$.ajax(ajaxparams);
+			}
+
+			showContent();
+
+
+			$("#add").click(() => {
+
+				let input = { bookid: $("#bookid").val(), bookname: $("#bookname").val(), price: $("#price").val() };
+
+				let ajaxparams = {
+					data: input,
+					url: "http://localhost:8081/addItems",
+					type: 'get',
+					dataType: 'json',
+					success: (dataRecieved) => {
+						if (dataRecieved === true) {
+							$("#message").text("Book Added Successfully");
+						}
+						else {
+							$("#message").text("Book not added");
+						}
+						showContent();
+					},
+					error: (errorRecieved) => {
+						console.log(errorRecieved);
+					}
+				};
+
+				$.ajax(ajaxparams);
+			});
+
+		});
+
+	</script>
+</head>
+
+<body>
+	Book id<input type="number" id="bookid">
+	<span id="message">Message(What Happened to book)</span><br><br>
+	Book name<input type="text" id="bookname"><br><br>
+	price<input type="number" id="price"><br><br>
+	<button id="add" style="background-color:aqua">add a book</button><br>
+	<span id="showAll">Show all books here</span>
+</body>
+
+</html>
